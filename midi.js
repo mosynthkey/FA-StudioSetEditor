@@ -14,7 +14,7 @@ function Midi()
 
   this_ = this;
 
-  navigator.requestMIDIAccess({sysex: true}).then((function(ma) {
+  navigator.requestMIDIAccess({sysex: false}).then((function(ma) {
 		// MIDIデバイスが使用可能
 		if (ma != null) {
 			if (typeof ma.inputs == 'function') {
