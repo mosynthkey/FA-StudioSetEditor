@@ -27,7 +27,7 @@ function Midi()
 				for (var o = it.next(); !o.done; o = it.next()) {
 					this_.mins.push(o.value);
 				}
-				var it = ma.outputss.values();
+				var it = ma.outputs.values();
 				for (var o = it.next(); !o.done; o = it.next()) {
 					this_.mouts.push(o.value);
 				}
