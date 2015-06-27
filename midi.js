@@ -14,7 +14,7 @@ function Midi()
 
   this_ = this;
 
-  navigator.requestMIDIAccess({sysex: false}).then((function(ma) {
+  navigator.requestMIDIAccess({sysex: true}).then((function(ma) {
 		// MIDIデバイスが使用可能
 		if (ma != null) {
 			if (typeof ma.inputs == 'function') {
@@ -24,12 +24,10 @@ function Midi()
 			} else {
 			// For New Chrome
 				var it = ma.inputs.values();
-        console.log(it);
 				for (var o = it.next(); !o.done; o = it.next()) {
 					this_.mins.push(o.value);
 				}
 				it = ma.outputs.values();
-        console.log(it);
 				for (var o = it.next(); !o.done; o = it.next()) {
 					this_.mouts.push(o.value);
 				}
