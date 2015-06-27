@@ -23,11 +23,11 @@ function Midi()
 				this_.mouts = ma.outputs();
 			} else {
 			// For New Chrome
-				var it = ma.ins.values();
+				var it = ma.inputs.values();
 				for (var o = it.next(); !o.done; o = it.next()) {
 					this_.mins.push(o.value);
 				}
-				var it = ma.outs.values();
+				var it = ma.outputss.values();
 				for (var o = it.next(); !o.done; o = it.next()) {
 					this_.mouts.push(o.value);
 				}
