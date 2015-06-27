@@ -55,15 +55,15 @@
               <input id='c{{part}}_name_pcmd' maxlength=12>
               <input id='c{{part}}_name_snd' maxlength=12>
             </td>
-            <td><input id='c{{part}}_kbd' type='checkbox'><label for='c{{part}}_kbd'>ON</label></td>
+            <td><input id='c{{part}}_kbd' type='checkbox'><label for='c{{part}}_kbd'>OFF</label></td>
             <td>
               <select id="c{{part}}_oct" >
                 <option ng-repeat="oct in octs" value={{oct+64}}>{{oct | withSign}}</option>
               </select>
             </td>
-            <td><input id='c{{part}}_pb' type='checkbox'><label for='c{{part}}_pb'>ON</label></td>
-            <td><input id='c{{part}}_mod' type='checkbox'><label for='c{{part}}_mod'>ON</label></td>
-            <td><input id='c{{part}}_hld1' type='checkbox'><label for='c{{part}}_hld1'>ON</label></td>
+            <td><input id='c{{part}}_pb' type='checkbox'><label for='c{{part}}_pb'>OFF</label></td>
+            <td><input id='c{{part}}_mod' type='checkbox'><label for='c{{part}}_mod'>OFF</label></td>
+            <td><input id='c{{part}}_hld1' type='checkbox'><label for='c{{part}}_hld1'>OFF</label></td>
             <td>
               <select id="c{{part}}_ch">
                 <option ng-repeat="ch in chs" value={{ch-1}}>{{ch}}</option>
