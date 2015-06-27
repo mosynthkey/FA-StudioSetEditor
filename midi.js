@@ -24,11 +24,13 @@ function Midi()
 			} else {
 			// For New Chrome
 				var it = ma.inputs.values();
+        console.log(it);
 				for (var o = it.next(); !o.done; o = it.next()) {
 					this_.mins.push(o.value);
 				}
-				var it2 = ma.outputs.values();
-				for (var o = it2.next(); !o.done; o = it2.next()) {
+				it = ma.outputs.values();
+        console.log(it);
+				for (var o = it.next(); !o.done; o = it.next()) {
 					this_.mouts.push(o.value);
 				}
 			}
