@@ -17,6 +17,7 @@ function Midi()
   navigator.requestMIDIAccess({sysex: true}).then((function(ma) {
 		// MIDIデバイスが使用可能
 		if (ma != null) {
+      console.log(ma);
 			if (typeof ma.inputs == 'function') {
 			// For Old Chrome
 				this_.mins = ma.inputs();
