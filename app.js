@@ -8,22 +8,31 @@ $(function() {
     if (midi.available) {
       clearInterval(wait_midi_timer);
 
-      fa = new FA(midi, reflectChangesFromFA);
+      fa = new FA(midi);
       FAParams.setFA(fa);
 
       // パラメーターの設定
       ssc = new FAParams('Studio Set Common', 0x18000000, 0x5d, 0, null, 0, null);
       ssc.connect(0x00, 0x0f, null, $('#ss_name'), FAParams.toInput, FAParams.fromInput);
-      for (var i = 1; i <= 16; i++) {
-        ssc.connectButton(0x54, $('#c' + i + '_select'), i - 1)
-      }
+      for (var i = 1; i <= 16; i++) ssc.connectButton(0x54, $('#c' + i + '_select'), i - 1);
 
       ssp = new Array(16);
       ssz = new Array(16);
+      sspeq = new Array(16);
       tone_common = new Array(16);
       for (var i = 1; i <= 16; i++) {
         ssz[i - 1] = new FAParams('Studio Set Zone ' + i, 0x18004000, 0x23, i, function(ch){return ((ch - 1) * 0x0100);}, 0, null);
         ssz[i - 1].connectCheck(0x02, $('#c' + i + '_kbd'), 1);
+
+        sspeq[i - 1] = new FAParams('Studio Set Part EQ ' + i, 0x18003000, 0x08, i, function(ch){return ((ch - 1) * 0x0100);}, 0, null);
+        sspeq[i - 1].connectCheck(0x00, $('#c' + i + '_eqsw'), 1);
+        sspeq[i - 1].connectSelect(0x01, $('#c' + i + '_eqlf'));
+        sspeq[i - 1].connectSelect(0x02, $('#c' + i + '_eqlg'));
+        sspeq[i - 1].connectSelect(0x03, $('#c' + i + '_eqmf'));
+        sspeq[i - 1].connectSelect(0x04, $('#c' + i + '_eqmg'));
+        sspeq[i - 1].connectSelect(0x05, $('#c' + i + '_eqmq'));
+        sspeq[i - 1].connectSelect(0x06, $('#c' + i + '_eqhf'));
+        sspeq[i - 1].connectSelect(0x07, $('#c' + i + '_eqhg'));
 
         ssp[i - 1] = new FAParams('Studio Set Part ' + i, 0x18002000, 0x4c, i, function(ch){return ((ch - 1) * 0x0100);}, 0, null);
         ssp[i - 1].connectSelect(0x00, $('#c' + i + '_ch'));
@@ -91,9 +100,15 @@ function createUI()
     $(this).css('width', '70px');
   });
 
-//  $('select').selectmenu();
+  $('.change_tone_name_button').each(function(i){
+    $(this).on('click', function(){changeToneName(i+1)});
+  });
 
-   $("#FaNotFoundDialog").dialog({autoOpen: false});
+  $('.count_tone_name_up_button').each(function(i){
+    $(this).on('click', function(){countToneNameUp(i+1)});
+  });
+
+  $("#FaNotFoundDialog").dialog({autoOpen: false});
 }
 
 function refreshUI()
@@ -105,19 +120,89 @@ function refreshUI()
   });
 }
 
-function reflectChangesFromFA()
-{
-  // FAの変更をコントロールに反映する
-  console.log(this);
-}
-
-function applyChangesToFA(obj)
-{
-  // コントロールからの変更をFAに反映する
-  console.log(obj);
-}
-
 function recieveAll()
 {
   FAParams.recieveAll();
+}
+
+function changeToneName(part)
+{
+  var tails = ['_pcm', '_sns', '_sna', '_pcmd', '_snd'];
+  for (t in tails) {
+    if ($('#c' + part + '_name' + tails[t]).is(':visible')) {
+      result = getNewName($('#c' + part + '_name' + tails[t]).val());
+      $('#c' + part + '_name' + tails[t]).val(result).change();
+      break;
+    }
+  }
+}
+
+function countToneNameUp(part)
+{
+  var tails = ['_pcm', '_sns', '_sna', '_pcmd', '_snd'];
+  for (t in tails) {
+    if ($('#c' + part + '_name' + tails[t]).is(':visible')) {
+      result = countNameUp($('#c' + part + '_name' + tails[t]).val());
+      $('#c' + part + '_name' + tails[t]).val(result).change();
+      break;
+    }
+  }
+}
+
+function getNewName(old_name)
+{
+  var len = old_name.length;
+  console.log("len:" + len)
+  var new_name = old_name;
+  if (old_name[len-1] == "'") {
+    new_name = new_name.slice(0, len-1).concat('"');
+  } else if (len < 12) {
+    new_name += "'";
+  } else if (len >= 12) {
+    // スペース削除
+    new_name = shortenName(old_name);
+    if (new_name.length < 12) {
+      new_name += "'";
+    }
+  }
+
+  return new_name;
+}
+
+function countNameUp(old_name)
+{
+  var new_name = old_name;
+  new_name = new_name.replace(/[0-9]+$/, parseInt(new_name.match(/[0-9]+$/)) + 1);
+
+  while (new_name.length > 12) {
+    var new_name_ = shortenName(new_name);
+    if (new_name_ == new_name) return old_name;
+    new_name = new_name_;
+  }
+  return new_name;
+}
+
+function shortenName(old_name)
+{
+  var new_name = old_name;
+  new_name = new_name.replace(/Lead/g,'Ld');
+  if (new_name.length >= 12) new_name = new_name.replace(/Piano/g,'Pno');
+  if (new_name.length >= 12) new_name = new_name.replace(/Organ/g,'Org');
+  if (new_name.length >= 12) new_name = new_name.replace(/Strings/g,'Str');
+  if (new_name.length >= 12) new_name = new_name.replace(/ /g,'');
+  if (new_name.length >= 12) {
+    for (var i = new_name.length - 1; i >= 1; i--) {
+      if (isSmallVowel(new_name[i])) {
+        new_name = new_name.slice(0, i) + new_name.slice(i+1, new_name.length);
+        break;
+      }
+    }
+  }
+
+  return new_name;
+}
+
+function isSmallVowel(c)
+{
+  return /[aeiou]/.test(c);
 }

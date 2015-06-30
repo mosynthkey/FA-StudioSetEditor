@@ -1,6 +1,6 @@
 // FAを制御する
 
-function FA(midi, toCtrl)
+function FA(midi)
 {
   // FAを検索する(今のところUSB接続のみ対応)
   this.available = false;
@@ -9,7 +9,6 @@ function FA(midi, toCtrl)
   this.fain = null;
   this.faout = null;
   this.device_id = null;
-  this.toCtrl = toCtrl;
 
   var this_ = this;
   var mins = midi.mins;

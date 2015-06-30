@@ -25,6 +25,16 @@
         for (var i = -3; i <= 3; i++) $scope.octs.push(i);
         $scope.chs = [];
         for (var i = 1; i <= 16; i++) $scope.chs.push(i);
+
+        // EQ
+        $scope.eq_low_freq = [16, 20, 25, 31, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800];
+        $scope.eq_high_freq = [630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300, 8000, 10000, 12500, 16000];
+        $scope.eq_mid_freq = $scope.eq_low_freq.concat($scope.eq_high_freq.concat().splice(2, 14));
+        $scope.eq_low_gain = Array.apply(null, new Array(31)).map(function(j, i){return (i - 15)});
+        $scope.eq_mid_gain = $scope.eq_low_gain.concat();
+        $scope.eq_high_gain = $scope.eq_low_gain.concat();
+        $scope.eq_mid_q = [0.5, 1.0, 2.0, 4.0, 8.0];
+
       }).filter('withSign', function () {
         return function (input) {
           if (input > 0) {
@@ -35,18 +45,34 @@
         }
       });
     </script>
-    <style>
-      select {width: 70px; height: 43px}
+    <style type="text/css">
+      body {background: #000010;}
+      #ss_name_label>b {color: #ff0000;}
+      body {
+         position: absolute;
+         left: 50%;
+         width:  880px;
+         margin-left: -440px;
+         overflow: auto;
+      }
+      body > table {
+        position: absolute;
+        left: 50%;
+        width:  830px;
+        margin-left: -415px;
+        overflow: auto;
+      }
     </style>
   </head>
   <body ng-app="app">
-    <b>STUDIO SET: </b><input id="ss_name" type="text" maxlength="15" class='ui-widget input'><button onClick="recieveAll()">recieveAll</button><br>
-    <div id="tabs">
+    <center><div id="ss_name_label"><b>STUDIO SET:</b><input id="ss_name" type="text" maxlength="15" class='ui-widget input'>
+      <button onClick="recieveAll()">Refresh</button></div></center>
+    <div id="tabs"  ng-controller="ctrlLoop">
       <ul>
         <li><a href="#tabs-main">MAIN</a></li>
-        <li><a href="#tabs-studioset">EFFECTS</a></li>
+        <li><a href="#tabs-eq">EQ</a></li>
       </ul>
-      <div id="tabs-main" ng-controller="ctrlLoop">
+      <div id="tabs-main">
         <table id="main_table" border=1 align="center">
           <tr><th></th><th>TYPE</th><th>NAME</th><th>KBD</th><th>OCT</th><th>PB</th><th>MOD</th><th>HLD</th><th>CH</th></tr>
           <tr ng-repeat="part in parts">
@@ -58,26 +84,35 @@
               <input id='c{{part}}_name_sna' maxlength=12>
               <input id='c{{part}}_name_pcmd' maxlength=12>
               <input id='c{{part}}_name_snd' maxlength=12>
+              <button class='change_tone_name_button'>'</button>
+              <button class='count_tone_name_up_button'>#</button>
             </td>
-            <td><input id='c{{part}}_kbd' type='checkbox'><label for='c{{part}}_kbd'>OFF</label></td>
-            <td>
-              <select id="c{{part}}_oct" >
-                <option ng-repeat="oct in octs" value={{oct+64}}>{{oct | withSign}}</option>
-              </select>
-            </td>
-            <td><input id='c{{part}}_pb' type='checkbox'><label for='c{{part}}_pb'>OFF</label></td>
-            <td><input id='c{{part}}_mod' type='checkbox'><label for='c{{part}}_mod'>OFF</label></td>
-            <td><input id='c{{part}}_hld1' type='checkbox'><label for='c{{part}}_hld1'>OFF</label></td>
-            <td>
-              <select id="c{{part}}_ch">
-                <option ng-repeat="ch in chs" value={{ch-1}}>{{ch}}</option>
-              </select>
-            </td>
+            <td><input id='c{{part}}_kbd' type='checkbox'><label for='c{{part}}_kbd'>X</label></td>
+            <td><select id="c{{part}}_oct"><option ng-repeat="oct in octs" value={{oct+64}}>{{oct | withSign}}</option></select></td>
+            <td><input id='c{{part}}_pb' type='checkbox'><label for='c{{part}}_pb'>X</label></td>
+            <td><input id='c{{part}}_mod' type='checkbox'><label for='c{{part}}_mod'>X</label></td>
+            <td><input id='c{{part}}_hld1' type='checkbox'><label for='c{{part}}_hld1'>X</label></td>
+            <td><select id="c{{part}}_ch"><option ng-repeat="ch in chs" value={{ch-1}}>{{ch}}</option></select></td>
+
           </tr>
         </table>
       </div>
 
       <div id="tabs-eq">
+        <table border=1 align="center">
+          <tr><th></th><th>EQ</th><th>LowF</th><th>LowG</th><th>MidF</th><th>MidG</th><th>MidQ</th><th>HighF</th><th>HighG</th></tr>
+          <tr ng-repeat="part in parts">
+            <td>{{part}}</td>
+            <td><input id='c{{part}}_eqsw' type='checkbox'><label for='c{{part}}_eqsw'>X</label></td>
+            <td><select id="c{{part}}_eqlf"><option ng-repeat="lf in eq_low_freq" value={{$index}}>{{lf}}</option></select></td>
+            <td><select id="c{{part}}_eqlg"><option ng-repeat="lg in eq_low_gain" value={{$index}}>{{lg | withSign}}</option></select></td>
+            <td><select id="c{{part}}_eqmf"><option ng-repeat="mf in eq_mid_freq" value={{$index}}>{{mf}}</option></select></td>
+            <td><select id="c{{part}}_eqmg"><option ng-repeat="mg in eq_mid_gain" value={{$index}}>{{mg | withSign}}</option></select></td>
+            <td><select id="c{{part}}_eqmq"><option ng-repeat="mq in eq_mid_q" value={{$index}}>{{mq}}</option></select></td>
+            <td><select id="c{{part}}_eqhf"><option ng-repeat="hf in eq_high_freq" value={{$index}}>{{hf}}</option></select></td>
+            <td><select id="c{{part}}_eqhg"><option ng-repeat="hg in eq_high_gain" value={{$index}}>{{hg | withSign}}</option></select></td>
+          </tr>
+        </table>
       </div>
 
       <div id="FaNotFoundDialog" title="FA-06/08 isn't found">

@@ -147,10 +147,10 @@ FAParams.toCheck = function(d)
   // mean[1] : Onの時の値
   if (value == mean[0]) {
     d['ctrl_obj'].prop('checked', false);
-    d['ctrl_obj'].button('option', 'label', 'OFF');
+    d['ctrl_obj'].button('option', 'label', 'X');
   } else {
     d['ctrl_obj'].prop('checked', true);
-    d['ctrl_obj'].button('option', 'label', 'ON');
+    d['ctrl_obj'].button('option', 'label', 'O');
   }
   d['ctrl_obj'].button('refresh');
 }
@@ -163,10 +163,10 @@ FAParams.fromCheck = function(d)
 
   if (d['ctrl_obj'].prop('checked')) {
     d['parent'].data[addr] = mean[1];
-    d['ctrl_obj'].button('option', 'label', 'ON');
+    d['ctrl_obj'].button('option', 'label', 'O');
   } else {
     d['parent'].data[addr] = mean[0];
-    d['ctrl_obj'].button('option', 'label', 'OFF');
+    d['ctrl_obj'].button('option', 'label', 'X');
   }
   d['ctrl_obj'].button('refresh');
   FAParams.fa.sendDT1((d['parent'].addr).to4Array(), d['parent'].data);
