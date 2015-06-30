@@ -15,13 +15,13 @@ function FA(midi, toCtrl)
   var mouts = midi.mouts;
 
   for (var i = 0; i < mins.length; i++) {
-    if (/*mins[i].manufacturer == 'Roland' && */mins[i].name == 'FA-06 08') {
+    if (/*mins[i].manufacturer == 'Roland' && */mins[i].name.match(/FA-06 08$/) == 'FA-06 08') {
       this.fain = mins[i];
     }
   }
 
   for (var i = 0; i < mouts.length; i++) {
-    if (/*mouts[i].manufacturer == 'Roland' && */mouts[i].name == 'FA-06 08') {
+    if (/*mouts[i].manufacturer == 'Roland' && */mouts[i].name.match(/FA-06 08$/) == 'FA-06 08') {
       this.faout = mouts[i];
     }
   }
