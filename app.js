@@ -14,6 +14,9 @@ $(function() {
       // パラメーターの設定
       ssc = new FAParams('Studio Set Common', 0x18000000, 0x5d, 0, null, 0, null);
       ssc.connect(0x00, 0x0f, null, $('#ss_name'), FAParams.toInput, FAParams.fromInput);
+      for (var i = 1; i <= 16; i++) {
+        ssc.connectButton(0x54, $('#c' + i + '_select'), i - 1)
+      }
 
       ssp = new Array(16);
       ssz = new Array(16);
@@ -61,6 +64,10 @@ $(function() {
           clearInterval(wait_fa_timer);
           FAParams.recieveAll();
         }
+        if (fa.notFound) {
+          $('#FaNotFoundDialog').dialog('open');
+          FAParams.recieveAll();
+        }
       }, 500);
     }
   }, 500);
@@ -78,8 +85,15 @@ function createUI()
       $(this).button();
     }
   });
-
   $('button').button();
+
+  $('.part_select').each(function(){
+    $(this).css('width', '70px');
+  });
+
+  $('select').selectmenu();
+
+   $("#FaNotFoundDialog").dialog({autoOpen: false});
 }
 
 function refreshUI()

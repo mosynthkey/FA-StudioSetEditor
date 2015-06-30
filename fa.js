@@ -4,6 +4,7 @@ function FA(midi, toCtrl)
 {
   // FAを検索する(今のところUSB接続のみ対応)
   this.available = false;
+  this.notFound = false;
   this.midi = midi;
   this.fain = null;
   this.faout = null;
@@ -28,12 +29,10 @@ function FA(midi, toCtrl)
 
   if (this.fain != null && this.faout != null) {
     midi.setInOut(this.fain, function(e) {this_.onMidiMsg(e, this_.toCtrl);}, this.faout);
+    for (var i = 0x10; i <= 0x1f; i++) midi.send([0xf0, 0x7e, i, 0x06, 0x01, 0xf7]);
   } else {
-    console.log("Cannot find FA!");
-    console.log(mins);
-    console.log(mouts);
+    this.notFound = true;
   }
-  for (var i = 0x10; i <= 0x1f; i++) midi.send([0xf0, 0x7e, i, 0x06, 0x01, 0xf7]);
 }
 
 FA.prototype.onMidiMsg = function(event, toCtrl)

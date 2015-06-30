@@ -17,6 +17,8 @@
     <script src="faparams.js"></script>
     <script>
       angular.module("app", []).controller("ctrlLoop", function($scope) {
+        $scope.tests = [];
+        for (var i = 0; i <= 127; i++) $scope.tests.push(i);
         $scope.parts = [];
         for (var i = 1; i <= 16; i++) $scope.parts.push(i);
         $scope.octs = [];
@@ -33,20 +35,22 @@
         }
       });
     </script>
+    <style>
+      select {width: 70px; height: 43px}
+    </style>
   </head>
   <body ng-app="app">
-    STUDIO SET: <input id="ss_name" type="text" maxlength="15">
-
+    <b>STUDIO SET: </b><input id="ss_name" type="text" maxlength="15" class='ui-widget input'><button onClick="recieveAll()">recieveAll</button><br>
     <div id="tabs">
       <ul>
         <li><a href="#tabs-main">MAIN</a></li>
         <li><a href="#tabs-studioset">EFFECTS</a></li>
       </ul>
-      <div id="tabs-main">
-        <table id="main_table" border=1 ng-controller="ctrlLoop" align="center">
+      <div id="tabs-main" ng-controller="ctrlLoop">
+        <table id="main_table" border=1 align="center">
           <tr><th></th><th>TYPE</th><th>NAME</th><th>KBD</th><th>OCT</th><th>PB</th><th>MOD</th><th>HLD</th><th>CH</th></tr>
           <tr ng-repeat="part in parts">
-            <td>{{part}}</td>
+            <td><button id='c{{part}}_select' class='part_select'>{{part}}</button></td>
             <td><div id='c{{part}}_type'></div></td>
             <td class='tone_names'>
               <input id='c{{part}}_name_pcm' maxlength=12>
@@ -72,10 +76,13 @@
           </tr>
         </table>
       </div>
-      <div id="tabs-eq">
 
+      <div id="tabs-eq">
+      </div>
+
+      <div id="FaNotFoundDialog" title="FA-06/08 isn't found">
+        <p>Cannot detect FA-06 or FA-08. Please connect to FA via USB and restart your browser.</p>
       </div>
     </div>
-    <button onClick="recieveAll()">recieveAll</button>
   </body>
 </html>

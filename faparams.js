@@ -33,7 +33,7 @@ FAParams.setData = function(addr_ary, data_ary)
     if (p.addr == addr) {
       p.data = data_ary.concat();
       p.ctrls.forEach(function(obj) {
-        obj['sendToCtrl'](obj);
+        if (obj['sendToCtrl'] != null) obj['sendToCtrl'](obj);
       });
     }
   });
@@ -84,9 +84,15 @@ FAParams.prototype.connect = function(start_addr, size, mean, ctrl_obj, sendToCt
   ctrl['getFromCtrl'] = getFromCtrl;
   ctrl['mean'] = mean; // dataの値が何を意味するのか。Optionとか
   ctrl['parent'] = this;
-  if (ctrl_obj != null) ctrl_obj.change(function(){
-    getFromCtrl(ctrl)});
-  this.ctrls.push(ctrl);
+  if (ctrl_obj != null) {
+    if (ctrl_obj.prop('tagName') == 'BUTTON') {
+      $(ctrl_obj).on('click', function(){
+        getFromCtrl(ctrl)});
+    } else {
+      ctrl_obj.change(function(){getFromCtrl(ctrl)});
+    }
+  }
+  if (sendToCtrl != null) this.ctrls.push(ctrl);
 }
 
 FAParams.prototype.connectInput = function(start_addr, size, ctrl_obj)
@@ -102,6 +108,15 @@ FAParams.prototype.connectSelect = function(start_addr, ctrl_obj)
 FAParams.prototype.connectCheck = function(start_addr, ctrl_obj, on_value)
 {
   this.connect(start_addr, 1, [0, on_value], ctrl_obj, FAParams.toCheck, FAParams.fromCheck);
+}
+
+FAParams.prototype.connectButton = function(start_addr, ctrl_obj, send_value)
+{
+  this.connect(start_addr, 1, null, ctrl_obj, null, function(d){
+    var addr = d['start_addr'];
+    d['parent'].data[addr] = send_value;
+    FAParams.fa.sendDT1((d['parent'].addr).to4Array(), d['parent'].data);
+  });
 }
 
 FAParams.toInput = function(d)
@@ -162,6 +177,7 @@ FAParams.toSelect = function(d)
   var addr = d['start_addr'];
   var value = d['parent'].data[addr];
   d['ctrl_obj'].val(value);
+
 }
 
 FAParams.fromSelect = function(d)
