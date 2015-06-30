@@ -91,7 +91,7 @@ function createUI()
     $(this).css('width', '70px');
   });
 
-  $('select').selectmenu();
+//  $('select').selectmenu();
 
    $("#FaNotFoundDialog").dialog({autoOpen: false});
 }
