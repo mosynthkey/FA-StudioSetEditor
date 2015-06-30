@@ -190,6 +190,7 @@ function shortenName(old_name)
   if (new_name.length >= 12) new_name = new_name.replace(/Organ/g,'Org');
   if (new_name.length >= 12) new_name = new_name.replace(/Strings/g,'Str');
   if (new_name.length >= 12) new_name = new_name.replace(/Choir/g,'Cho');
+  if (new_name.length >= 12) new_name = new_name.replace(/Bell/g,'Bl');
   if (new_name.length >= 12) new_name = new_name.replace(/ /g,'');
   if (new_name.length >= 12) {
     for (var i = new_name.length - 1; i >= 1; i--) {
