@@ -47,6 +47,7 @@ FA.prototype.onMidiMsg = function(event, toCtrl)
   var dt1_head = [0xf0, 0x41, this.device_id, 0x00, 0x00, 0x77, 0x12];
   var dt1_tail = [0x00 /* CheckSum */, 0xf7];
 
+  this.device_id = 16;
   if (msg.cmphead(irm_head)) {
     // Identity Request Messageの処理
     if (msg.cmptail(irm_tail_06) || msg.cmptail(irm_tail_08) || msg.cmptail(irm_tail_06_2) || msg.cmptail(irm_tail_08_2)) {
